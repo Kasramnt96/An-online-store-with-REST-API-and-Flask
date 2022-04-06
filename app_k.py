@@ -4,7 +4,7 @@ from flask_jwt import JWT
 
 
 from security_k import authenticate, identity
-from resources.user_k import UserRegister
+from resources.user_k import UserRegister, User
 from resources.item_k import Item, ItemList
 from resources.store_k import Store, StoreList
 
@@ -28,6 +28,7 @@ api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
 api.add_resource(StoreList, "/stores")
 api.add_resource(UserRegister, "/register")
+api.add_resource(User, "/user/<int:user_id>")
 
 if __name__ == "__main__":
     from db import db

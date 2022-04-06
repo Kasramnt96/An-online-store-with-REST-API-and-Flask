@@ -19,7 +19,12 @@ class ItemModel(db.Model):
 
 
     def json(self):
-        return {"name":self.name, "price":self.price}
+        return {
+            "id":self.id,
+            "name":self.name,
+            "price":self.price,
+            "store_id":self.store_id
+           }
 
 
     @classmethod
@@ -29,6 +34,10 @@ class ItemModel(db.Model):
         # return ItemModel.query.filter_by(name = name).filter_by(id = 1)
         #return ItemModel.query.filter_by(name = name, id = 1)
         # return ItemModel.query.filter_by(name = name).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
 
     def save_to_db(self): #SQLALCHEMY both updates and inserts by using the following code
