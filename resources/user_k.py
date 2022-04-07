@@ -1,16 +1,17 @@
 
 from flask_restful import Resource, reqparse
-
+from flask_jwt_extended import create_access_token, create_refresh_token
 from models.user_k import UserModel
+
+_user_parser = reqparse.RequestParser()
+_user_parser.add_argument("username", type = str, required = True, help = "This field can not be blank")
+_user_parser.add_argument("password", type = str, required = True, help = "This field can not be blank")
 
 class UserRegister(Resource):
 
-    parser = reqparse.RequestParser()
-    parser.add_argument("username", type = str, required = True, help = "This field can not be blank")
-    parser.add_argument("password", type = str, required = True, help = "This field can not be blank")
 
     def post(self): 
-        data = UserRegister.parser.parse_args()  #expects a username and a passsword
+        data = _user_parser.parse_args()  #expects a username and a passsword
 
         if UserModel.find_by_username(data["username"]):
             return {"message" : "A user with that username exists"}, 400
@@ -38,6 +39,25 @@ class User(Resource):
             return {"message": "User not found"}, 404
         user.delete_from_db()
         return {"message": "User deleted"}, 200
+
+class UserLogin(Resource):
+
+    
+
+    @classmethod
+    def post(cls):
+         
+        data = _user_parser.parse_args()
+         
+        user = UserModel.find_by_username(data["username"])
+        # this is what the authenticate() func used to do
+        if user and user.password == data["password"]:
+            access_token = create_access_token(identity = user.id, fresh = True)
+            refresh_token = create_refresh_token(user.id)
+            return {"access_token":access_token, "refresh_token":refresh_token},200
+
+        return {"message":"Invalid credentials"}, 401
+
 
     
         
