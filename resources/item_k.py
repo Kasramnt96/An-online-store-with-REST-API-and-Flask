@@ -2,7 +2,7 @@
 from flask_restful import Resource, reqparse
 
 from flask import Flask, request
-from flask_jwt_extended import  jwt_required
+from flask_jwt_extended import  jwt_required, get_jwt
 from models.item_k import ItemModel
 
 
@@ -40,9 +40,11 @@ class Item(Resource):
 
         return item.json(), 201
 
-    
+    @jwt_required()
     def delete(self, name):
-        
+        claims = get_jwt()
+        if not claims["is_admin"]:
+            return{"message":"admin privilege required"}, 401
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
