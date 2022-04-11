@@ -21,7 +21,7 @@ class Item(Resource):
 
         
 
-    
+    @jwt_required(fresh=True)
     def post(self, name): 
         
         if ItemModel.find_by_name(name):
